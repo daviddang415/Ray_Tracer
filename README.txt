@@ -1,0 +1,1 @@
+So far, I have implemented distributed ray tracing and the group Traceable. I am currently working on adding transparency, but there are currently some bugs in the code.

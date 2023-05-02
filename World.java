@@ -424,8 +424,8 @@ public class World {
 	}
 
 	
-	//Need to resolve some bugs for refraction
-	public Canvas refraction(String fileName, int hsize, int vsize, double size, PointLight pointLight) {
+	//Need to resolve some bugs for transparency
+	public Canvas transparency(String fileName, int hsize, int vsize, double size, PointLight pointLight) {
 
 		Canvas cav = new Canvas(hsize,vsize);
 
@@ -564,8 +564,8 @@ public class World {
 		w.distributedTest();
 		//w.transparencyTest();
 	    //w.diffuse_light("images/group_example.ppm", 1000, 1000,10, pointLight);
-		w.distributed_ray_tracing("images/distributed_ray_tracing_example2.ppm", 1000, 1000,10, g);
-		//w.refraction("images/refraction_example.ppm", 1000, 1000,10, pointLight);
+		w.distributed_ray_tracing("images/distributed_ray_tracing_example.ppm", 1000, 1000,10, g);
+		//w.transparency("images/refraction_example.ppm", 1000, 1000,10, pointLight);
 	}
 
 	public void groupTest() {
