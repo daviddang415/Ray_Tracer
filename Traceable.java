@@ -66,13 +66,13 @@ public abstract class Traceable {
 		for (Intersection temp: result) {
 			if ((temp.t > t) && !temp.object.includes(last.object)) {
 				/*
-				    System.out.println(":(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(");
+				    System.out.println("///////////////////////////////////////////////////");
 				    System.out.println(last.object.material.color);
 				    System.out.println(temp.object.material.color);
 					System.out.println(last.t);
 					System.out.println(temp.t);
 					System.out.println(!temp.object.includes(last.object));
-					System.out.println(":(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(:(");
+				    System.out.println("///////////////////////////////////////////////////");
 				*/
 					ans.add(temp);
 			}

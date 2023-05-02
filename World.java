@@ -424,6 +424,7 @@ public class World {
 	}
 
 	
+	//Need to resolve some bugs for refraction
 	public Canvas refraction(String fileName, int hsize, int vsize, double size, PointLight pointLight) {
 
 		Canvas cav = new Canvas(hsize,vsize);
@@ -495,7 +496,7 @@ public class World {
 					}
 
 					//System.out.println("Beginning transparency code");
-					Intersection lastObject = Traceable.otherHit(results, temp.t, temp);
+					//Intersection lastObject = Traceable.otherHit(results, temp.t, temp);
 					
 					//System.out.println("===============================================================");
 					//System.out.println("Color 1:");
@@ -503,6 +504,7 @@ public class World {
 					//System.out.println(lastObject);
 					//System.out.println("--------------------");
 					//System.out.println("Color 2:");
+					/*
 					while (lastObject != null) {
 						//if (temp.object.material.color.getT()[2] == 1) {
 							//System.out.println(lastObject.object.material.color);
@@ -512,6 +514,13 @@ public class World {
 						new_colors[1] = new_colors[1] * (1 - temp.object.material.transparency);
 						new_colors[2] = new_colors[2] * (1 - temp.object.material.transparency);
 						lastObject = Traceable.otherHit(results, lastObject.t, lastObject);
+					}
+					*/
+
+					if (temp.object.material.color.getT()[1] == 1) {
+						new_colors[0] = new_colors[0] * (1 - temp.object.material.transparency);
+						new_colors[1] = new_colors[1] * (1 - temp.object.material.transparency);
+						new_colors[2] = new_colors[2] * (1 - temp.object.material.transparency);
 					}
 					
 					//System.out.println("===============================================================");
@@ -545,83 +554,85 @@ public class World {
 		return result;
 	}
 
-
-	 //I worked alongside and received helped from Jared Kim to complete this assignment
 	public static void main(String[] args) {
 
 		World w = new World();
 		PointLight pointLight = new PointLight(1, 1, 1, 0.5, 0, 2);
 		Grid g = new Grid(3, 0.1, new MyColor(1,1,1), new Point(0.5, 0, 2));
 		//w.triple();
-		//w.setDefault2();
-		//w.render("test99.ppm", 1000, 1000,10);
-		//w.render2("test100.ppm", 1000, 1000,10);
-		w.groupTest();
+		//w.groupTest();
+		w.distributedTest();
 		//w.transparencyTest();
-	    w.diffuse_light("group_demo.ppm", 1000, 1000,10, pointLight);
-		//w.distributed_ray_tracing("distributed_ray_tracing.ppm", 1000, 1000,10, g);
-		//w.refraction("test104.ppm", 1000, 1000,10, pointLight);
+	    //w.diffuse_light("images/group_example.ppm", 1000, 1000,10, pointLight);
+		w.distributed_ray_tracing("images/distributed_ray_tracing_example2.ppm", 1000, 1000,10, g);
+		//w.refraction("images/refraction_example.ppm", 1000, 1000,10, pointLight);
 	}
 
 	public void groupTest() {
-		Cube cube = new Cube();
-		cube.transform = Matrices.mult(
-			Transformations.getTranslate(1, 0,0));
-		cube.material = new Material();
-		cube.material.color = new MyColor(0,0,1);
-		cube.material.diffuse = 0.7;
-		cube.material.specular = 0.3;
-		cube.material.ambient = 0.9;
+		
+		Cube cube1 = new Cube();
+		cube1.transform = Matrices.mult(
+			Transformations.getTranslate(0, -1, 2),
+			Transformations.getScale(0.1, 0.1, 0.1));
+		cube1.material = new Material();
+		cube1.material.color = new MyColor(0,0,1);
+		cube1.material.diffuse = 0.7;
+		cube1.material.specular = 0.3;
+		cube1.material.ambient = 0.9;
 
-		Sphere sphere = new Sphere();
-		sphere.material = new Material();
-		sphere.material.color = new MyColor(1,0,0);
-		sphere.material.diffuse = 0.7;
-		sphere.material.specular = 0.3;
-		sphere.material.ambient = 0.9;
+		Sphere sphere1 = new Sphere();
+		sphere1.transform = Transformations.getRotX(45);
+		sphere1.material = new Material();
+		sphere1.material.color = new MyColor(1,0,0);
+		sphere1.material.diffuse = 0.7;
+		sphere1.material.specular = 0.3;
+		sphere1.material.ambient = 0.9;
 
-		Group group = new Group();
-		group.transform = Matrices.mult(
+		Group group1 = new Group();
+		group1.transform = Matrices.mult(
 			Transformations.getTranslate(-0.5, 1,0),
 			Transformations.getScale(0.5,0.5,0.7));
-		group.addObject(cube);
-		group.addObject(sphere);
+		group1.addObject(cube1);
+		group1.addObject(sphere1);
 
-		add(group);
-		//add(cube);
-		//add(sphere);
+		
+		Cube cube2 = new Cube();
+		cube2.transform = Matrices.mult(
+		Transformations.getTranslate(0, -1, 2),
+		Transformations.getScale(0.1, 0.1, 0.1));
+		cube2.material = new Material();
+		cube2.material.color = new MyColor(0,0,1);
+		cube2.material.diffuse = 0.7;
+		cube2.material.specular = 0.3;
+		cube2.material.ambient = 0.9;
 
+		Sphere sphere2 = new Sphere();
+		sphere2.transform = Transformations.getRotX(45);
+		sphere2.material = new Material();
+		sphere2.material.color = new MyColor(1,0,0);
+		sphere2.material.diffuse = 0.7;
+		sphere2.material.specular = 0.3;
+		sphere2.material.ambient = 0.9;
+
+		Group group2 = new Group();
+		group2.transform = Matrices.mult(
+		Transformations.getRotZ(20.5),
+		Transformations.getTranslate(-1.0, 3.5,0),
+		Transformations.getScale(0.8,1.0,0.5));
+		group2.addObject(cube2);
+		group2.addObject(sphere2);
+		
+
+		add(group1);
+		add(group2);
 	}
 
 	public void distributedTest() {
-		Cube cube1 = new Cube();
-		cube1.transform = Transformations.getTranslate(0, 0, -0.5);
-		cube1.material = new Material();
-		cube1.material.color = new MyColor(1,0,0);
-		cube1.material.diffuse = 0.7;
-		cube1.material.specular = 0.3;
-		cube1.material.ambient = 0.9;
 
-		Cube cube2 = new Cube();
-		cube2.transform = Transformations.getScale(0.5,0.5,0.7);
-		cube2.material = new Material();
-		cube2.material.color = new MyColor(0,0,1);
-		cube2.material.diffuse = 0.7;
-		cube2.material.specular = 0.3;
-		cube2.material.ambient = 0.9;
-		cube2.material.transparency = 1.0;
-
-		add(cube1);
-		add(cube2);
-
-
-	}
-
-	public void transparencyTest() {
 		Cube cube = new Cube();
 		cube.transform = Matrices.mult(Transformations.getTranslate(0, 0, -3.0), Transformations.getScale(3.0,3.0,3.0));
 		cube.material = new Material();
-		cube.material.color = new MyColor(0,1,0);
+		cube.material.color = new MyColor(1,0,0);
 		cube.material.diffuse = 0.7;
 		cube.material.specular = 0.3;
 		cube.material.ambient = 0.9;
@@ -629,7 +640,7 @@ public class World {
 		Cube cube1 = new Cube();
 		cube1.transform = Transformations.getTranslate(0, 0, -0.5);
 		cube1.material = new Material();
-		cube1.material.color = new MyColor(1,0,0);
+		cube1.material.color = new MyColor(0,1,0);
 		cube1.material.diffuse = 0.7;
 		cube1.material.specular = 0.3;
 		cube1.material.ambient = 0.9;
@@ -641,17 +652,37 @@ public class World {
 		cube2.material.diffuse = 0.7;
 		cube2.material.specular = 0.3;
 		cube2.material.ambient = 0.9;
-		cube2.material.transparency = 0.5;
 
 		add(cube);
 		add(cube1);
 		add(cube2);
+	}
 
+	public void transparencyTest() {
+
+		Cube cube = new Cube();
+		cube.transform = Matrices.mult(Transformations.getTranslate(0, 0, -5.0), Transformations.getScale(3.0,3.0,3.0));
+		cube.material = new Material();
+		cube.material.color = new MyColor(1,0,0);
+		cube.material.diffuse = 0.7;
+		cube.material.specular = 0.3;
+		cube.material.ambient = 0.9;
+
+		Cube cube1 = new Cube();
+		cube1.transform = Transformations.getTranslate(0, 0, -0.5);
+		cube1.material = new Material();
+		cube1.material.color = new MyColor(0,1,0);
+		cube1.material.diffuse = 0.7;
+		cube1.material.specular = 0.3;
+		cube1.material.ambient = 0.9;
+		cube1.material.transparency = 1.0;
+
+		add(cube);
+		add(cube1);
 	}
 
 
 	public void triple() {
-
 
 		Cube middle = new Cube();
 		middle.transform = Matrices.mult(
