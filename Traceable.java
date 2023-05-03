@@ -116,13 +116,16 @@ public abstract class Traceable {
 		
 		var test = new ArrayList<Intersection>();
 
-		test.add(new Intersection(new Cube(),2));
-		test.add(new Intersection(new Cube(),1));
+		Intersection cube1 = new Intersection(new Cube(),2);
+		Intersection cube2 = new Intersection(new Cube(),1);
 
-		for (Intersection f:test)
-			System.out.println(f);
+		test.add(cube1);
+		test.add(cube2);
 
-		System.out.println(hit(test));
+		//for (Intersection f:test)
+		//	System.out.println(f);
+
+		System.out.println(otherHit(test, cube1.t, cube1));
 
 
 
