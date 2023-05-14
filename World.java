@@ -531,8 +531,7 @@ public class World {
 		return cav;
 	}
 
-		//Need to resolve some bugs for reflection
-		public Canvas reflection(String fileName, int hsize, int vsize, double size, PointLight pointLight) {
+	public Canvas my_render(String fileName, int hsize, int vsize, double size, Grid grid) {
 
 			Canvas cav = new Canvas(hsize,vsize);
 	
@@ -546,7 +545,7 @@ public class World {
 	
 					Ray r = new Ray(new Point(0,0,2), new Vector(new_i*f_o_v,new_j*f_o_v,-3));
 
-					MyColor finalMyColor = getColor(r, pointLight, 0);			
+					MyColor finalMyColor = getColor(r, grid, 0);			
 
 					double[] finalMyColorArray = finalMyColor.getT();
 
@@ -571,7 +570,7 @@ public class World {
 			return cav;
 		}
 
-	public MyColor getColor(Ray r, PointLight pointLight, int counter) {
+	public MyColor getColor(Ray r, Grid grid, int counter) {
 		if (counter == 3) {
 			return new MyColor(0,0,0);
 		} else {
@@ -610,13 +609,15 @@ public class World {
 	
 						Point actual_point = new Point(new Tuple(new_point));
 						
-						double[] pointLight_vals = pointLight.intensityAt(actual_point, this).getT();
-	
+						double[] grid_vals = grid.intensityAt(actual_point, this).getT();
+
+						double[] new_colors = new double[c_vals.length];
+
 						//new_code
 						double[] normalized_normal = temp.object.local_normal_at(actual_point, temp).normalize().getT();
-						double[] normalized_ls = pointLight.getDirection(actual_point, this).normalize().getT();
+						double[] normalized_ls = grid.getDirection(actual_point, this).normalize().getT();
 						double dot = 0;
-	
+
 						for (int b = 0; b < 3; b++) {
 							dot = dot + normalized_normal[b]*normalized_ls[b];
 						}
@@ -626,27 +627,16 @@ public class World {
 						for (int k = 0; k < finalMyColorArray.length; k++) {
 							//new_colors[k] = c_vals[k] * pointLight_vals[k];
 							//adding each of the indiviudal colors together
-							finalMyColorArray[k] = finalMyColorArray[k] + (dot*pointLight_vals[k]*temp.object.material.diffuse + 0.2)*c_vals[k]*(1 - temp.object.material.transparency)*(1 - temp.object.material.reflective);	
+							finalMyColorArray[k] = finalMyColorArray[k] + (dot*grid_vals[k]*temp.object.material.diffuse + 0.2)*c_vals[k]*(1 - temp.object.material.transparency)*(1 - temp.object.material.reflective);	
 						}
 
 						if (temp.object.material.reflective > 0) {
-							MyColor tempColor = getColor(new Ray(actual_point, reflection_vector(r.direction, new Vector(new Tuple(normalized_normal)))), pointLight, counter + 1);	
+							MyColor tempColor = getColor(new Ray(actual_point, reflection_vector(r.direction, new Vector(new Tuple(normalized_normal)))), grid, counter + 1);	
 							double[] tempColorArray = tempColor.getT();
 							finalMyColorArray[0] = finalMyColorArray[0] + tempColorArray[0] * temp.object.material.reflective;
 							finalMyColorArray[1] = finalMyColorArray[1] + tempColorArray[1] * temp.object.material.reflective;
 							finalMyColorArray[2] = finalMyColorArray[2] + tempColorArray[2] * temp.object.material.reflective;
 						}
-						
-						/*
-						if (temp.object.material.color.getT()[1] == 1) {
-							new_colors[0] = new_colors[0] * (1 - temp.object.material.transparency);
-							new_colors[1] = new_colors[1] * (1 - temp.object.material.transparency);
-							new_colors[2] = new_colors[2] * (1 - temp.object.material.transparency);
-						}
-						
-						//System.out.println("===============================================================");
-							
-						*/
 	
 						finalMyColor = new MyColor(finalMyColor);
 						transparency_counter = transparency_counter + (1 - temp.object.material.transparency);
@@ -675,19 +665,9 @@ public class World {
 	public static void main(String[] args) {
 
 		World w = new World();
-		
-		PointLight pointLight = new PointLight(1, 1, 1, 0.5, 1, 2);
-		Grid g = new Grid(3, 0.1, new MyColor(1,1,1), new Point(0.5, 0, 2));
-		//w.triple();
-		//w.groupTest();
-		//w.distributedTest();
-		//w.transparencyTest();
-		w.reflectiveTest();
-	    //w.diffuse_light("images/group_example.ppm", 1000, 1000,10, pointLight);
-		//w.distributed_ray_tracing("images/distributed_ray_tracing_example.ppm", 1000, 1000,10, g);
-	    //w.transparency("images/refraction_example.ppm", 1000, 1000,10, pointLight);
-		w.reflection("images/reflection_example.ppm", 1000, 1000,10, pointLight);
-		
+		Grid g = new Grid(3, 0.1, new MyColor(1,1,1), new Point(-1.0, 2.0, 2));
+		w.final_image();
+		w.my_render("images/final_image.ppm", 1000, 1000,10, g);
 	}
 
 	public void groupTest() {
@@ -908,5 +888,40 @@ public class World {
 
 		add(fourth);
 	}
+
+	public void final_image() {
+		Cube cube = new Cube();
+		cube.transform = Matrices.mult(Transformations.getTranslate(0, 0, -5.0), 
+									   Transformations.getScale(15.0,15.0,3.0));
+		cube.material = new Material();
+		cube.material.color = new MyColor(1,0,0);
+		cube.material.diffuse = 0.7;
+		cube.material.specular = 0.3;
+		cube.material.ambient = 0.9;
+
+		Sphere sphere = new Sphere();
+		sphere.transform = Matrices.mult(Transformations.getTranslate(0.2, 0.5, -0.1), 
+										Transformations.getScale(1.0,1.0,0.7));
+		sphere.material = new Material();
+		sphere.material.color = new MyColor(0,1,0);
+		sphere.material.diffuse = 0.7;
+		sphere.material.specular = 0.3;
+		sphere.material.ambient = 0.9;
+
+		Cube cube2 = new Cube();
+		cube2.transform = Matrices.mult(Transformations.getTranslate(0, -0.5, -0.7), 
+						                Transformations.getScale(1.0,1.0,0.7));
+		cube2.material = new Material();
+		cube2.material.color = new MyColor(0,0,1);
+		cube2.material.diffuse = 0.7;
+		cube2.material.specular = 0.3;
+		cube2.material.ambient = 0.9;
+
+		add(cube);
+		add(sphere);
+		add(cube2);
+	}
+
+	
 
 }
