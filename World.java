@@ -75,7 +75,6 @@ public class World {
 	 * 
 	 */
 
-	 //For this assignment, I worked alongside and received helped from Jared Kim
 	public Canvas render(String fileName, int hsize, int vsize, double size) {
 
 
